@@ -4,23 +4,21 @@
 
 class tile
 {
+    int size = 0;
+    const int pos_x;
+    const int pos_y;
+    const int max_size;
     
 public:
-    int size = 0;
-    int max_size;
-    
-    bool occupied = false;
     int player = 0;
     
-    int pos_x;
-    int pos_y;
+    bool occupied = false;
     
     tile(int position_x, int position_y, int thresh_size);
     
-    bool fill(int player);
-    void add();
-    void capture(int player);
-    
+    void fill(int player);
     void clear();
     bool checkoverflow();
+
+    void print_detail();
 };

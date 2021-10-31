@@ -8,10 +8,11 @@ class grid
 {
 private:
     std::vector< std::vector<tile> > m_grid;
-    int size_x, size_y;
+    const int size_x, size_y;
 public:
     grid(int size_x, int size_y);
-    bool click(int pos_x, int pos_y, int player);
+    bool click(int pos_x, int pos_y, int player, bool force=0);
     void printgrid();
+    bool checkplayer(int player);
 };
 

@@ -5,6 +5,7 @@ grid::grid(int x, int y):size_x(x), size_y(y){
         std::vector<tile> horiz;
         for (int j=0; j<x; ++j){
             int m_size = 3;
+            
             if (i == 0 || i == y-1) m_size -= 1;
             if (j == 0 || j == x-1) m_size -= 1;
             
@@ -17,34 +18,49 @@ grid::grid(int x, int y):size_x(x), size_y(y){
 }
 
 void grid::printgrid(){
+    std::cout << "--------------" << std::endl;
     for (auto x: m_grid){
-        for (auto y: x){
-            std::cout << "(" << y.pos_x << ", " << y.pos_y << ", " << y.player << ", " << y.size << "/" << y.max_size << ")";
-        }
+        for (auto y: x) y.print_detail();
         std::cout << std::endl;
     }
+    std::cout <<  "--------------" << std::endl;
 }
 
-bool grid::click(int x, int y, int p){
+bool grid::checkplayer(int p){
+    for (auto x: m_grid)
+        for (auto y: x)
+            if(y.player == p)
+                return true;
+    return false;
+}
+
+bool grid::click(int x, int y, int p, bool force){
+    std::cout << "Tile (" << x << ", " << y << ") is clicked by player " << p << std::endl;
     tile& t = m_grid[y][x];    
     if (!t.occupied){
-        std::cout << "Tile (" << x << ", " << y << ") is not filled." << std::endl;
+        std::cout << "Tile is not filled." << std::endl;
         t.fill(p);
         return true;
     } else {
-        if (t.player != p){
+        std::cout << "Tile is filled." << std::endl;
+        if (t.player != p && !force){
+            std::cout << "Tile doesn't belong to this player " << p << std::endl;
             return false;
         } else {
+            std::cout << "Tile belongs to this player" << std::endl;
             if (t.checkoverflow()){
+                std::cout << "Tile is exploding" << std::endl;
                 t.clear();
-                if (x!=0) m_grid[y][x-1].capture(p);
-                if (x!=size_x-1) m_grid[y][x+1].capture(p);
-                if (y!=0) m_grid[y-1][x].capture(p);
-                if (y!=size_y-1) m_grid[y+1][x].capture(p);
+                if (x>0) click(x-1, y, p, 1);
+                if (x<size_x-1) click(x+1, y, p, 1);
+                if (y>0) click(x, y-1, p, 1);
+                if (y<size_y-1) click(x, y+1, p, 1);
+                return true;
             } else {
-                t.add();
+                std::cout << "Tile can't be exploded." << std::endl;
+                t.fill(p);
             }
-            return true;
         }
+        return true;
     }
 }
