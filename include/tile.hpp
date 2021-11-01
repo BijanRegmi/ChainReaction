@@ -24,4 +24,5 @@ public:
     void clear();
     bool overflow();
     void print_details();
+    int getsize(){return size;}
 };

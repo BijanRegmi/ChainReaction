@@ -1,6 +1,6 @@
 #include "grid.hpp"
 
-grid::grid(int x, int y, int l):size_x(x), size_y(y), length(l){
+grid::grid(int x, int y, int l, sf::RenderWindow* w):size_x(x), size_y(y), length(l), target(w){
     for (int i=0; i<y; ++i){
         std::vector<tile> horiz;
         for (int j=0; j<x; ++j){
@@ -15,9 +15,6 @@ grid::grid(int x, int y, int l):size_x(x), size_y(y), length(l){
     }
     std::cout << "Filling" << std::endl;
     
-    _texture.create(x*l, y*l);
-    this->setTexture(_texture.getTexture());
-
     printgrid();
 }
 
@@ -49,7 +46,7 @@ void grid::draw_grid(){
         grid[i*2+1].position = {colX, length*size_x};
     }
     
-    _texture.draw(grid);
+    target->draw(grid);
 }
 
 bool grid::checkplayer(int p){
@@ -70,7 +67,6 @@ void grid::explosion(int x, int y){
             if (click(x-1, y, p, 1)){
                 printgrid();
                 std::cout << "Removing tile(" << x <<", " << y << ") circle " << std::endl;
-                // animate_move(true, false, -1, t.circles[0]);
                 t.remove();
             }
         }
@@ -78,7 +74,6 @@ void grid::explosion(int x, int y){
             if (click(x+1, y, p, 1)){
                 printgrid();
                 std::cout << "Removing tile(" << x <<", " << y << ") circle " << std::endl;
-                // animate_move(true, false, -1, t.circles[0]);
                 t.remove();
             }
         }
@@ -86,7 +81,6 @@ void grid::explosion(int x, int y){
             if (click(x, y-1, p, 1)){
                 printgrid();
                 std::cout << "Removing tile(" << x <<", " << y << ") circle " << std::endl;
-                // animate_move(true, false, -1, t.circles[0]);
                 t.remove();
             }
         }
@@ -94,7 +88,6 @@ void grid::explosion(int x, int y){
             if (click(x, y+1, p, 1)){
                 printgrid();
                 std::cout << "Removing tile(" << x <<", " << y << ") circle " << std::endl;
-                // animate_move(true, false, -1, t.circles[0]);
                 t.remove();
             }
         }
@@ -108,7 +101,7 @@ bool grid::click(int x, int y, int p, bool force){
     tile& t = m_grid[y][x];    
     if (!t.occupied){
         std::cout << "Tile is not filled." << std::endl;
-        t.fill(p, colors[p]);
+        fill(t, p);
         return true;
     } else {
         std::cout << "Tile is filled." << std::endl;
@@ -117,35 +110,32 @@ bool grid::click(int x, int y, int p, bool force){
             return false;
         } else {
             std::cout << "Tile belongs to this player" << std::endl;
-            t.fill(p, colors[p]);
+            fill(t, p);
             explosion(x, y);
         }
         return true;
     }
 }
 
-void grid::animate_move(bool x, bool y, int dir, sf::CircleShape* c){
-    int moved = 0;
-    int anim_const = dir*length/8;
-    while(moved != dir*length){
-        c->move(x*anim_const, y*anim_const);
-        moved += anim_const;
-    }
+void grid::fill(tile& t, int p){
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    t.fill(p, colors[p]);
+    render();
 }
 
-void grid::render(){
-    _texture.clear();
+
+void grid::render(bool c){
+    if (c) target->clear();
     draw_grid();
     for (int i=0; i<size_y; i++){
         for (int j=0; j<size_x; j++){
             tile& t = m_grid[i][j];
             if (t.occupied){
-                for (auto c: t.circles){
-                    if (c!=nullptr)
-                        _texture.draw(*c);
+                for (int i=0, j=t.getsize(); i<j; ++i){
+                    target->draw(*t.circles[i]);
                 }
             }
         }
     }
-    _texture.display();
+    target->display();
 }
