@@ -1,15 +1,15 @@
 #include "grid.hpp"
 
 int main(){
-    const int length = 80;
+    const int length = 100;
     const int g_X = 5;
-    const int g_Y = 5;
+    const int g_Y = 4;
     
     sf::Event ev;
-    sf::RenderWindow win(sf::VideoMode(g_X*length, g_Y*length), "GRID");
+    sf::RenderWindow win(sf::VideoMode(500, 500), "GRID");
     win.setFramerateLimit(60);
     
-    grid g(g_X, g_Y, length, &win);
+    grid g(g_X, g_Y, &win);
 
     while(win.isOpen()){
         while(win.pollEvent(ev)){

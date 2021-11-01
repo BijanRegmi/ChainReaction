@@ -10,7 +10,7 @@ private:
     const int pos_x;
     const int pos_y;
     const int max_size;
-    const int length;
+    const float len_x, len_y;
 
     void realign();
 public:
@@ -18,7 +18,7 @@ public:
     bool occupied = false;
     std::vector<sf::CircleShape*> circles;
 
-    tile(int pos_x, int pos_y, int max_size, int length);
+    tile(int pos_x, int pos_y, int max_size, int len_x, int len_y);
     void fill(int p, uint32_t c);
     void remove();
     void clear();

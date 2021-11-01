@@ -1,6 +1,9 @@
 #include "grid.hpp"
 
-grid::grid(int x, int y, int l, sf::RenderWindow* w):size_x(x), size_y(y), length(l), target(w){
+grid::grid(int x, int y, sf::RenderWindow* w):size_x(x), size_y(y), target(w){
+    sf::Vector2u size = w->getSize();
+    len_x = size.x/x;
+    len_y = size.y/y;
     for (int i=0; i<y; ++i){
         std::vector<tile> horiz;
         for (int j=0; j<x; ++j){
@@ -9,7 +12,7 @@ grid::grid(int x, int y, int l, sf::RenderWindow* w):size_x(x), size_y(y), lengt
             if (i == 0 || i == y-1) m_size -= 1;
             if (j == 0 || j == x-1) m_size -= 1;
             
-            horiz.push_back(tile(j, i, m_size, length));
+            horiz.push_back(tile(j, i, m_size, len_x, len_y));
         }
         m_grid.push_back(horiz);
     }
@@ -32,18 +35,18 @@ void grid::draw_grid(){
     int numLines = size_x+size_y-2;
     sf::VertexArray grid(sf::Lines, 2*(numLines));
     
-    for(int i=0; i < size_x-1; i++){
+    for(int i=0; i < size_y-1; i++){
         int r = i+1;
-        int rowY = length*r;
+        float rowY = len_y*r;
         grid[i*2].position = {0, rowY};
-        grid[i*2+1].position = {length*size_y, rowY};
+        grid[i*2+1].position = {len_x*size_x, rowY};
     }
     
-    for(int i=size_x-1; i < numLines; i++){
-        int c = i-size_x+2;
-        int colX = length*c;
+    for(int i=size_y-1; i < numLines; i++){
+        int c = i-size_y+2;
+        float colX = len_x*c;
         grid[i*2].position = {colX, 0};
-        grid[i*2+1].position = {colX, length*size_x};
+        grid[i*2+1].position = {colX, len_y*size_y};
     }
     
     target->draw(grid);
@@ -126,7 +129,7 @@ void grid::fill(tile& t, int p){
 void grid::handleinput(sf::Event& e){
     if (e.key.code == sf::Mouse::Left){
         sf::Vector2i mPos = sf::Mouse::getPosition(*target);
-        click(mPos.x/length, mPos.y/length, 1);
+        click(mPos.x/len_x, mPos.y/len_y, 1);
     }
 }
 
