@@ -11,7 +11,7 @@ void tile::fill(int p, uint32_t c){
     a->setOrigin(0.2*length, 0.2*length);
     a->setFillColor(sf::Color(c));
     a->setOutlineColor(sf::Color::White);
-    a->setOutlineThickness(length/100);
+    a->setOutlineThickness(1);
     circles.push_back(a);
 
     size++;
