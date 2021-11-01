@@ -7,8 +7,11 @@ void tile::fill(int p, uint32_t c){
     player = p;
     
     // Add one new circle
-    sf::CircleShape* a = new sf::CircleShape(0.3*length);
+    sf::CircleShape* a = new sf::CircleShape(0.2*length);
+    a->setOrigin(0.2*length, 0.2*length);
     a->setFillColor(sf::Color(c));
+    a->setOutlineColor(sf::Color::White);
+    a->setOutlineThickness(length/100);
     circles.push_back(a);
 
     size++;
@@ -21,26 +24,19 @@ void tile::fill(int p, uint32_t c){
 void tile::realign(){
     int s = circles.size();
     if (s==1){
-        circles[0]->setRadius(0.2*length);
-        circles[0]->setOrigin(0.2*length, 0.2*length);
         circles[0]->setPosition((pos_x+0.5)*length, (pos_y+0.5)*length);
     } else if(s==2){
-        circles[0]->setRadius(0.2*length);
-        circles[0]->setOrigin(0.2*length, 0.2*length);
         circles[0]->setPosition((pos_x+0.4)*length, (pos_y+0.5)*length);
-        circles[1]->setRadius(0.2*length);
-        circles[1]->setOrigin(0.2*length, 0.2*length);
         circles[1]->setPosition((pos_x+0.6)*length, (pos_y+0.5)*length);
     } else if (s==3){
-        circles[0]->setRadius(0.2*length);
-        circles[0]->setOrigin(0.2*length, 0.2*length);
         circles[0]->setPosition((pos_x+0.4)*length, (pos_y+0.4)*length);
-        circles[1]->setRadius(0.2*length);
-        circles[1]->setOrigin(0.2*length, 0.2*length);
         circles[1]->setPosition((pos_x+0.6)*length, (pos_y+0.4)*length);
-        circles[2]->setRadius(0.2*length);
-        circles[2]->setOrigin(0.2*length, 0.2*length);
         circles[2]->setPosition((pos_x+0.5)*length, (pos_y+0.6)*length);
+    } else if (s==4){
+        circles[0]->setPosition((pos_x+0.4)*length, (pos_y+0.4)*length);
+        circles[1]->setPosition((pos_x+0.6)*length, (pos_y+0.4)*length);
+        circles[2]->setPosition((pos_x+0.4)*length, (pos_y+0.6)*length);
+        circles[3]->setPosition((pos_x+0.6)*length, (pos_y+0.6)*length);
     }
 }
 
