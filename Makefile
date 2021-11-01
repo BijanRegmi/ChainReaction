@@ -5,7 +5,7 @@ CC = g++
 CFLAGS = -Wall -g
 
 # Executable
-EXEC = sorts
+EXEC = chainrxn
 
 # Source directory
 SRC = src
