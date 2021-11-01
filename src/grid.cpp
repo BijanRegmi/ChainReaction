@@ -123,6 +123,13 @@ void grid::fill(tile& t, int p){
     render();
 }
 
+void grid::handleinput(sf::Event& e){
+    if (e.key.code == sf::Mouse::Left){
+        sf::Vector2i mPos = sf::Mouse::getPosition(*target);
+        click(mPos.x/length, mPos.y/length, 1);
+    }
+}
+
 
 void grid::render(bool c){
     if (c) target->clear();

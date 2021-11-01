@@ -28,5 +28,6 @@ public:
     void printgrid();
     bool checkplayer(int player);
     void render(bool c=true);
+    void handleinput(sf::Event& event);
 };
 
