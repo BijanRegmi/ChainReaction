@@ -1,4 +1,5 @@
 #include "SplashScene.hpp"
+#include "MainMenu.hpp"
 
 SplashScene::SplashScene( GameDataRef data): _data(data){}
 
@@ -6,7 +7,7 @@ void SplashScene::Init(){
     _data->res.LoadFont("Japanese", "res/japanese.ttf");
     splash_string.setString("C H A I N  R E A C T I O N");
     splash_string.setFont(_data->res.GetFont("Japanese"));
-    splash_string.setCharacterSize(_data->window.getSize().x/10);
+    splash_string.setCharacterSize(WIN_WIDTH/20);
 
     sf::FloatRect textrect = splash_string.getLocalBounds();
     splash_string.setOrigin(textrect.left+textrect.width/2, textrect.top+textrect.height/2);
@@ -24,7 +25,9 @@ void SplashScene::HandleInput(){
 void SplashScene::Update(){
     if (_opacity<255){
         splash_string.setFillColor(sf::Color(255,255,255,_opacity));
-        _opacity += 1;
+        _opacity += 255.f/(FPS*SPLASH_SCREEN_TIME);
+    } else {
+        _data->handler.AddScene(std::make_unique<MainMenu>(_data), true);
     }
 }
 
