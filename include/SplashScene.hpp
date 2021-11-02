@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include "constants.hpp"
 #include "Scene.hpp"
 #include "Game.hpp"
 
@@ -16,5 +17,5 @@ public:
 private:
     GameDataRef _data;
     sf::Text splash_string;
-    int _opacity=0;
+    float _opacity=0;
 };
