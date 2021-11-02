@@ -5,12 +5,14 @@
 
 #include "SceneHandler.hpp"
 #include "ResourceManager.hpp"
+#include "InputManager.hpp"
 
 #include <SFML/Graphics.hpp>
 
 struct GameData{
     SceneHandler handler;
     ResourceManager res;
+    InputManager inp;
     sf::RenderWindow window;
     sf::Event event;
 };
