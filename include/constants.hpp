@@ -6,3 +6,4 @@
 #define SPLASH_SCREEN_TIME 1
 
 #define MENU_BG_PATH "res/background.jpg"
+#define MENU_PARTICLE_COUNT 5
