@@ -12,6 +12,10 @@ void SplashScene::Init(){
     _data->res.changeOrigin(splash_string);
     splash_string.setPosition(_data->window.getView().getCenter());
 
+    _data->res.LoadSound("Intro", "res/intro.wav");
+    _introSound.setBuffer(_data->res.GetSound("Intro"));
+    _introSound.play();
+
 }
 
 void SplashScene::HandleInput(){
