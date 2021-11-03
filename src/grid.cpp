@@ -1,33 +1,36 @@
 #include "grid.hpp"
 
-grid::grid(int x, int y, sf::RenderWindow* w):size_x(x), size_y(y), target(w){
-    sf::Vector2u size = w->getSize();
-    len_x = size.x/x;
-    len_y = size.y/y;
-    for (int i=0; i<y; ++i){
+grid::grid(GameDataRef data, int x, int y, int p):_data(data), size_x(x), size_y(y), player_count(p){
+    sf::Vector2u size = _data->window.getSize();
+    len_x = size.x/size_x; len_y = size.y/size_y;
+    for (int i=1; i<=p; i++){
+        playerlist[i] = true;
+    }
+}
+
+void grid::Init(){
+    // Load Resources
+    for (int i=1; i<=player_count; i++){
+        std::string str = "Player"+std::to_string(i);
+        std::string fName = "res/"+std::to_string(i)+".png";
+        _data->res.LoadTexture(str, fName);
+    }
+    _data->res.LoadTexture("GridBg", GRID_BG_PATH);
+    _background.setTexture(_data->res.GetTexture("GridBg"));
+
+    // Create tiles
+    for (int i=0; i<size_y; ++i){
         std::vector<tile> horiz;
-        for (int j=0; j<x; ++j){
+        for (int j=0; j<size_x; ++j){
             int m_size = 4;
             
-            if (i == 0 || i == y-1) m_size -= 1;
-            if (j == 0 || j == x-1) m_size -= 1;
+            if (i == 0 || i == size_y-1) m_size -= 1;
+            if (j == 0 || j == size_x-1) m_size -= 1;
             
-            horiz.push_back(tile(j, i, m_size, len_x, len_y));
+            horiz.push_back(tile(j, i, m_size, len_x, len_y, _data));
         }
         m_grid.push_back(horiz);
     }
-    std::cout << "Filling" << std::endl;
-    
-    printgrid();
-}
-
-void grid::printgrid(){
-    std::cout << "--------------" << std::endl;
-    for (auto x: m_grid){
-        for (auto y: x) y.print_details();
-        std::cout << std::endl;
-    }
-    std::cout <<  "--------------" << std::endl;
 }
 
 void grid::draw_grid(){
@@ -49,103 +52,106 @@ void grid::draw_grid(){
         grid[i*2+1].position = {colX, len_y*size_y};
     }
     
-    target->draw(grid);
+    _data->window.draw(grid);
 }
 
-bool grid::checkplayer(int p){
-    for (auto x: m_grid)
-        for (auto y: x)
-            if(y.player == p)
-                return true;
-    return false;
+int grid::CheckGameOver(){
+    std::set<int> foundPlayers;
+    for (auto x: m_grid){
+        for (auto y: x){
+            if (y.occupied){
+                foundPlayers.insert(y.player);
+            }
+        }
+    }
+    if (foundPlayers.size() == 1) return *foundPlayers.begin();                          // If only one player is alive game is over
+    for (int i=1; i<=player_count; i++) playerlist[i] = false;                           // Make everyone dead before updating their status
+    for (auto i=foundPlayers.begin(), j=foundPlayers.end(); i!=j; ++i){
+        playerlist[*i] = true;                                                           // Found players are set as alive
+    }
+    return -1;
+    
 }
 
 void grid::explosion(int x, int y){
     tile& t = m_grid[y][x];
     int p = t.player;
     if (t.overflow()){
-        std::cout << "Tile (" << x << ", " << y << ") is exploding" << std::endl;
-        t.clear();
+        t.makeVaccant();
         if (x>0){
-            if (click(x-1, y, p, 1)){
-                printgrid();
-                std::cout << "Removing tile(" << x <<", " << y << ") circle " << std::endl;
-                t.remove();
-            }
+            click(x-1, y, p, 1);
+            t.remove();
         }
         if (x<size_x-1){
-            if (click(x+1, y, p, 1)){
-                printgrid();
-                std::cout << "Removing tile(" << x <<", " << y << ") circle " << std::endl;
-                t.remove();
-            }
+            click(x+1, y, p, 1);
+            t.remove();
         }
         if (y>0){
-            if (click(x, y-1, p, 1)){
-                printgrid();
-                std::cout << "Removing tile(" << x <<", " << y << ") circle " << std::endl;
-                t.remove();
-            }
+            click(x, y-1, p, 1);
+            t.remove();
         }
         if (y<size_y-1){
-            if (click(x, y+1, p, 1)){
-                printgrid();
-                std::cout << "Removing tile(" << x <<", " << y << ") circle " << std::endl;
-                t.remove();
-            }
+            click(x, y+1, p, 1);
+            t.remove();
         }
-    } else {
-        std::cout << "Tile can't be exploded." << std::endl;
     }
 }
 
 bool grid::click(int x, int y, int p, bool force){
-    std::cout << "Tile (" << x << ", " << y << ") is clicked by player " << p << std::endl;
     tile& t = m_grid[y][x];    
-    if (!t.occupied){
-        std::cout << "Tile is not filled." << std::endl;
-        fill(t, p);
-        return true;
-    } else {
-        std::cout << "Tile is filled." << std::endl;
-        if (t.player != p && !force){
-            std::cout << "Tile doesn't belong to this player " << p << std::endl;
-            return false;
-        } else {
-            std::cout << "Tile belongs to this player" << std::endl;
-            fill(t, p);
-            explosion(x, y);
-        }
-        return true;
-    }
+    if (!t.occupied){fill(t, p); return true;}
+    if (t.player != p && !force) return false;
+    fill(t, p);
+    explosion(x, y);
+    return true;
 }
 
 void grid::fill(tile& t, int p){
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
-    t.fill(p, colors[p]);
-    render();
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    t.fill(p);
+    Draw();
+    Update();
 }
 
-void grid::handleinput(sf::Event& e){
-    if (e.key.code == sf::Mouse::Left){
-        sf::Vector2i mPos = sf::Mouse::getPosition(*target);
-        click(mPos.x/len_x, mPos.y/len_y, 1);
+void grid::HandleInput(){
+    while(_data->window.pollEvent(_data->event)){
+        if ((_data->event.type == sf::Event::Closed) || (_data->event.type == sf::Event::KeyPressed && _data->event.key.code == sf::Keyboard::Escape))
+            _data->window.close();
+        else if (_data->event.type == sf::Event::MouseButtonPressed && _data->event.mouseButton.button == sf::Mouse::Left){
+
+            sf::Vector2i mPos = sf::Mouse::getPosition(_data->window);
+            
+            if (click(mPos.x/len_x, mPos.y/len_y, curr_player)){                        // If click was success
+                if (!beginCheck) if (curr_player == player_count) beginCheck = true;    // Begin game over checks once all player placed their ball
+                do {
+                    curr_player = (curr_player%player_count)+1;
+                } while (!playerlist[curr_player]);                                     // Increase curr_player count if the player is already dead
+            }
+
+        } else if (_data->event.type == sf::Event::KeyPressed && _data->event.key.code == sf::Keyboard::Return)
+            _data->handler.RemoveScene();
     }
 }
 
 
-void grid::render(bool c){
-    if (c) target->clear();
+void grid::Draw(){
+    _data->window.clear();
+    _data->window.draw(_background);
     draw_grid();
     for (int i=0; i<size_y; i++){
         for (int j=0; j<size_x; j++){
-            tile& t = m_grid[i][j];
-            if (t.occupied){
-                for (int i=0, j=t.getsize(); i<j; ++i){
-                    target->draw(*t.circles[i]);
-                }
-            }
+            m_grid[i][j].Draw();
         }
     }
-    target->display();
+    _data->window.display();
+}
+
+void grid::Update(){
+    if (beginCheck){
+        int winner = CheckGameOver();
+        if (winner!=-1){
+            std::cout << "Player " << winner << " won the game!" << std::endl;
+            _data->handler.RemoveScene();
+        }
+    }
 }
