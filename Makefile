@@ -20,7 +20,7 @@ BIN = bin
 LIBS = none
 
 # Linking flags
-LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-system
+LDFLAGS = -lsfml-graphics -lsfml-window -lsfml-audio -lsfml-system
 
 ###################################################################################################
 
