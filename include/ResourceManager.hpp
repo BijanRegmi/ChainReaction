@@ -2,6 +2,7 @@
 
 #include <map>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 class ResourceManager{
 public:
@@ -14,9 +15,13 @@ public:
     void LoadFont(std::string name, std::string fileName);
     sf::Font& GetFont(std::string name);
 
+    void LoadSound(std::string name, std::string fileName);
+    sf::SoundBuffer& GetSound(std::string name);
+
     void changeOrigin(sf::Text& text);
     void changeOrigin(sf::RectangleShape& rect);
 private:
     std::map<std::string, sf::Texture> _textures;
     std::map<std::string, sf::Font> _fonts;
+    std::map<std::string, sf::SoundBuffer> _buffers;
 };
