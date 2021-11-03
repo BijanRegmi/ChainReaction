@@ -18,4 +18,5 @@
 #define MENU_BG_PATH "res/background.jpg"
 #define MOLECULE_PATH "res/molecule.png"
 #define MENU_SOUND_PATH "res/menu.wav"
+#define GRID_BG_PATH "res/grid_bg.png"
 

@@ -8,27 +8,41 @@
 
 #include <SFML/Graphics.hpp>
 
+#include "constants.hpp"
+#include "Scene.hpp"
+#include "Game.hpp"
 #include "tile.hpp"
 
-class grid{
+class grid: public Scene{
+public:
+    grid(GameDataRef data, int size_x, int size_y, int players);
+    
+    void Init();
+
+    void HandleInput();
+    void Update();
+    void Draw();
 private:
+    GameDataRef _data;
+
     std::vector< std::vector<tile> > m_grid;
+    sf::Sprite _background;
     
-    sf::RenderWindow* target;
-    
-    const uint32_t colors[7] = {0xffffffff, 0xff0000ff, 0x00ff00ff, 0x0000ffff, 0xffff00ff, 0x00ffffff, 0xff00ffff};
     const int size_x, size_y;
     float len_x, len_y;
+    const int player_count;
+
+    int curr_player = 1;
+
+    bool beginCheck = false;
+    std::map<int, bool> playerlist;
     
     void draw_grid();
     void fill(tile& t, int p);
     void explosion(int x, int y);
-public:
-    grid(int size_x, int size_y, sf::RenderWindow* target);
+
     bool click(int pos_x, int pos_y, int player, bool force = 0);
-    void printgrid();
-    bool checkplayer(int player);
-    void render(bool c=true);
-    void handleinput(sf::Event& event);
+    int CheckGameOver();
+    
 };
 

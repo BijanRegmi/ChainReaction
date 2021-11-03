@@ -1,4 +1,5 @@
 #include "MainMenu.hpp"
+#include "grid.hpp"
 #include <string>
 #include <random>
 #include <iostream>
@@ -73,7 +74,18 @@ void MainMenu::HandleInput(){
 }
 
 void MainMenu::Update(){
-    _button.isClicked(_data->window);
+    if (_button.isClicked(_data->window)){
+        _menuSound.stop();
+
+        std::string t_str = tile_size.getString();
+        std::string p_str = playerCount.getString();
+
+        int t_x = t_str.at(6) - '0';
+        int t_y = t_str.at(8) - '0';
+        int p = p_str.back() - '0';
+
+        _data->handler.AddScene(std::make_unique<grid>(_data, t_x, t_y, p), false);
+    }
     updateParticles();
 }
 
