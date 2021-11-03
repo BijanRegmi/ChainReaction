@@ -4,15 +4,13 @@
 SplashScene::SplashScene( GameDataRef data): _data(data){}
 
 void SplashScene::Init(){
-    _data->res.LoadFont("Japanese", "res/japanese.ttf");
-    splash_string.setString("C H A I N  R E A C T I O N");
+    splash_string.setString(TITLE);
     splash_string.setFont(_data->res.GetFont("Japanese"));
     splash_string.setCharacterSize(WIN_WIDTH/20);
 
     _data->res.changeOrigin(splash_string);
     splash_string.setPosition(_data->window.getView().getCenter());
 
-    _data->res.LoadSound("Intro", "res/intro.wav");
     _introSound.setBuffer(_data->res.GetSound("Intro"));
     _introSound.play();
 
