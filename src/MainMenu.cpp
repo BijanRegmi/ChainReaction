@@ -1,5 +1,5 @@
 #include "MainMenu.hpp"
-#include <cmath>
+#include <string>
 #include <random>
 #include <iostream>
 
@@ -10,19 +10,37 @@ void MainMenu::Init(){
     _data->res.LoadTexture("MenuBg", MENU_BG_PATH);
     _data->res.LoadTexture("Molecule", "res/molecule.png");
 
+    sf::Font& font = _data->res.GetFont("Japanese");
+
+    // Initiate the title
     _title.setString("C H A I N  R E A C T I O N");
-    _title.setFont(_data->res.GetFont("Japanese"));
+    _title.setFont(font);
     _title.setCharacterSize(WIN_WIDTH/20);
-    sf::FloatRect textrect = _title.getLocalBounds();
-    _title.setOrigin(textrect.left+textrect.width/2, textrect.top+textrect.height/2);
+    _data->res.changeOrigin(_title);
     _title.setPosition(WIN_WIDTH*0.5, WIN_HEIGHT*0.2);
 
-    _button.Init("Play", sf::Vector2f(WIN_WIDTH/3, WIN_HEIGHT/6), WIN_WIDTH/12, 0x00000000, _data->res.GetFont("Japanese"));
+    // Tile Count
+    tile_size.setString("Tile: 3x3");
+    tile_size.setFont(font);
+    tile_size.setCharacterSize(WIN_WIDTH/20);
+    _data->res.changeOrigin(tile_size);
+    tile_size.setPosition(0.1*WIN_WIDTH-tile_size.getGlobalBounds().left, WIN_HEIGHT*0.8);
 
+    // Play Button
+    _button.Init("Play", sf::Vector2f(WIN_WIDTH/5, WIN_HEIGHT/10), WIN_WIDTH/20, 0x00000000, font);
     _button.setPosition(sf::Vector2f(WIN_WIDTH*0.5, 0.8*WIN_HEIGHT));
 
+    // Player count text
+    playerCount.setString("Players: 2");
+    playerCount.setFont(font);
+    playerCount.setCharacterSize(WIN_WIDTH/20);
+    _data->res.changeOrigin(playerCount);
+    playerCount.setPosition(0.9*WIN_WIDTH-playerCount.getGlobalBounds().width-playerCount.getGlobalBounds().left, WIN_HEIGHT*0.8);
+
+    // Background
     _background.setTexture(_data->res.GetTexture("MenuBg"));
 
+    // Particles
     std::random_device rd;                                                      /////////////////////////////////
     std::mt19937 gen(rd());                                                     //  For uniform generation of  //
     std::uniform_int_distribution<int> rand_x(0, WIN_WIDTH);                    //  random number in range.    //
@@ -47,6 +65,8 @@ void MainMenu::HandleInput(){
     while(_data->window.pollEvent(_data->event)){
         if ((_data->event.type == sf::Event::Closed) || (_data->event.type == sf::Event::KeyPressed && _data->event.key.code == sf::Keyboard::Escape))
             _data->window.close();
+        else if(_data->event.type == sf::Event::MouseWheelScrolled)
+            OnScroll(_data->event);
     }
 }
 
@@ -62,6 +82,8 @@ void MainMenu::Draw(){
         _data->window.draw(x.sprite);
     _button.draw(_data->window);
     _data->window.draw(_title);
+    _data->window.draw(playerCount);
+    _data->window.draw(tile_size);
     _data->window.display();
 }
 
@@ -73,5 +95,54 @@ void MainMenu::updateParticles(){
         sf::Vector2f rect = s.getPosition();
         if (rect.x < 0 || rect.x > WIN_WIDTH) particles[i].vx *= (-1);
         if (rect.y < 0 || rect.y > WIN_HEIGHT) particles[i].vy *= (-1);
+    }
+}
+
+void MainMenu::OnScroll(sf::Event& e){
+    if (_data->inp.isOverText(playerCount, _data->window)){
+        std::string curr = playerCount.getString();
+        int next;
+        if (e.mouseWheelScroll.delta > 0){
+            next = curr.back()-'0'+1;
+            if (next>6) next = 6;
+        }
+        else{
+            next = curr.back()-'0'-1;
+            if (next<2) next = 2;
+        }
+        playerCount.setString("Players: "+std::to_string(next));
+    } else if(_data->inp.isOverText(tile_size, _data->window)){
+        std::string str = tile_size.getString();
+
+        float mposx = e.mouseWheelScroll.x;
+        float l_lpos = tile_size.findCharacterPos(6).x;
+        float l_rpos = tile_size.findCharacterPos(7).x;
+
+        float r_lpos = tile_size.findCharacterPos(8).x;
+
+        int next;
+        if (mposx < l_rpos && mposx > l_lpos){
+            
+            if (e.mouseWheelScroll.delta>0)
+                next = str.at(6)-'0'+1;
+            else
+                next = str.at(6)-'0'-1;
+            
+            if (next>9) next = 9;
+            if (next<3) next = 3;
+            tile_size.setString(str.replace(6, 1, std::to_string(next)));
+        }
+        else if (mposx>r_lpos){
+            
+            if (e.mouseWheelScroll.delta>0)
+                next = str.at(8)-'0'+1;
+            else
+                next = str.at(8)-'0'-1;
+            
+            if (next>9) next = 9;
+            if (next<3) next = 3;
+            tile_size.setString(str.replace(8, 1, std::to_string(next)));
+
+        }
     }
 }

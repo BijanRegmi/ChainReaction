@@ -12,8 +12,7 @@ bool InputManager::isSpriteClicked(sf::Sprite& sprite, sf::Mouse::Button button,
 }
 
 bool InputManager::isOverText(sf::Text& text, sf::RenderWindow& window){
-    sf::FloatRect rect = text.getLocalBounds();
-    std::cout << rect.left << " " << rect.width;
+    sf::FloatRect rect = text.getGlobalBounds();
     sf::Vector2i mPos = sf::Mouse::getPosition(window);
     if (rect.contains(mPos.x, mPos.y))
         return true;

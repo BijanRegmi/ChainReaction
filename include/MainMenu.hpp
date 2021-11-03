@@ -32,5 +32,7 @@ private:
 
     void updateParticles();
 
-    int playerCount = 0;
+    sf::Text playerCount;
+    sf::Text tile_size;
+    void OnScroll(sf::Event& e);
 };

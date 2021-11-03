@@ -13,6 +13,9 @@ public:
     
     void LoadFont(std::string name, std::string fileName);
     sf::Font& GetFont(std::string name);
+
+    void changeOrigin(sf::Text& text);
+    void changeOrigin(sf::RectangleShape& rect);
 private:
     std::map<std::string, sf::Texture> _textures;
     std::map<std::string, sf::Font> _fonts;
