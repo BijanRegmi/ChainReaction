@@ -9,8 +9,7 @@ void SplashScene::Init(){
     splash_string.setFont(_data->res.GetFont("Japanese"));
     splash_string.setCharacterSize(WIN_WIDTH/20);
 
-    sf::FloatRect textrect = splash_string.getLocalBounds();
-    splash_string.setOrigin(textrect.left+textrect.width/2, textrect.top+textrect.height/2);
+    _data->res.changeOrigin(splash_string);
     splash_string.setPosition(_data->window.getView().getCenter());
 
 }

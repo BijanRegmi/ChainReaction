@@ -19,3 +19,8 @@ void ResourceManager::LoadFont(std::string name, std::string fileName){
 sf::Font& ResourceManager::GetFont(std::string name){
     return _fonts.at(name);
 }
+
+void ResourceManager::changeOrigin(sf::Text& text){
+    sf::FloatRect textrect = text.getLocalBounds();
+    text.setOrigin(textrect.left+textrect.width/2, textrect.top+textrect.height/2);
+}
