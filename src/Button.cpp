@@ -3,7 +3,7 @@
 void Button::Init(std::string str, sf::Vector2f size, int charSize, uint32_t color, sf::Font& font) {
     button.setSize(size);
     button.setFillColor(sf::Color(color));
-    button.setOutlineColor(sf::Color::Green);
+    button.setOutlineColor(sf::Color(0x002461ff));
 
     // Change origin for box
     sf::FloatRect rect = button.getLocalBounds();
@@ -42,7 +42,7 @@ bool Button::isMouseOver(sf::RenderWindow& window) {
 
 bool Button::isClicked(sf::RenderWindow& window){
     if (isMouseOver(window) && sf::Mouse::isButtonPressed(sf::Mouse::Left)){
-        button.setFillColor(sf::Color::Green);
+        button.setFillColor(sf::Color(0x02225bff));
         return true;
     } else {
         button.setFillColor(sf::Color::Transparent);
