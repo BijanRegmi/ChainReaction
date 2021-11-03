@@ -7,13 +7,10 @@
 MainMenu::MainMenu(GameDataRef data):_data(data){}
 
 void MainMenu::Init(){
-    _data->res.LoadTexture("MenuBg", MENU_BG_PATH);
-    _data->res.LoadTexture("Molecule", "res/molecule.png");
-
     sf::Font& font = _data->res.GetFont("Japanese");
 
     // Initiate the title
-    _title.setString("C H A I N  R E A C T I O N");
+    _title.setString(TITLE);
     _title.setFont(font);
     _title.setCharacterSize(WIN_WIDTH/20);
     _data->res.changeOrigin(_title);
@@ -39,6 +36,11 @@ void MainMenu::Init(){
 
     // Background
     _background.setTexture(_data->res.GetTexture("MenuBg"));
+
+    // Sound
+    _menuSound.setBuffer(_data->res.GetSound("MenuSound"));
+    _menuSound.setLoop(true);
+    _menuSound.play();
 
     // Particles
     std::random_device rd;                                                      /////////////////////////////////

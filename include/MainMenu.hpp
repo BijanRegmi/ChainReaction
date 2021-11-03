@@ -21,6 +21,7 @@ private:
     sf::Sprite _background;
     sf::Text _title;
     sf::Sprite _PlayerCount;
+    sf::Sound _menuSound;
 
     Button _button;
 
