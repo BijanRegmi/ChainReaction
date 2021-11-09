@@ -34,7 +34,7 @@ private:
 
     int curr_player = 1;
 
-    bool beginCheck = false;
+    bool beginCheck = false, isRunning = true;
     std::map<int, bool> playerlist;
     
     void draw_grid();
