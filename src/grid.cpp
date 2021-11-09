@@ -98,6 +98,7 @@ void grid::explosion(int x, int y){
 }
 
 bool grid::click(int x, int y, int p, bool force){
+    if (!isRunning) return false;
     tile& t = m_grid[y][x];    
     if (!t.occupied){fill(t, p); return true;}
     if (t.player != p && !force) return false;
@@ -152,6 +153,7 @@ void grid::Update(){
         if (winner!=-1){
             std::cout << "Player " << winner << " won the game!" << std::endl;
             _data->handler.RemoveScene();
+            isRunning = false;
         }
     }
 }
